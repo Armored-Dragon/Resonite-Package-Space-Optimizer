@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Resonite Package Space Optimizer</title>
+		<script async src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+		<script async src="/index.js"></script>
+		<link rel="stylesheet" href="index.css" />
+	</head>
+	<body>
+		<div class="file-container">
+			<input type="file" id="zipFile" accept=".resonitepackage" />
+			<div class="options">
+				<div class="option-entry">
+					<div class="option-title">
+						<span>Convert images to WebP</span>
+						<input id="webp-convert-value" type="checkbox" />
+					</div>
+
+					<div class="slider">
+						<span>Quality</span>
+						<input id="webp-quality" type="range" value="0.85" max="1" min="0.01" step="0.01" />
+						<span id="webp-quality-value"></span>
+					</div>
+				</div>
+			</div>
+			<div class="file-stats">
+				<div class="file-stats-entry">
+					<span>Original Size: <span id="original-size-value">-</span></span>
+				</div>
+				<div class="file-stats-entry">
+					<span>Optimized Size: <span id="optimized-size-value">-</span></span>
+				</div>
+			</div>
+			<button class="action-button" id="goBtn" disabled>Compress Package</button>
+			<a id="downLink" class="hidden">Download Compressed Package</a>
+		</div>
+
+		<div class="asset-container">
+			<div id="fileList"></div>
+		</div>
+	</body>
+</html>
