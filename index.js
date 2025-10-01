@@ -1,61 +1,117 @@
-let zipData;
-let changedFiles = [];
-let zipOriginalSize = 0;
-let zipNewSize = 0;
-let packageName = "";
+let currentPageStep = 0;
 
-document.getElementById("zipFile").addEventListener("change", async (e) => {
+let inputFile = {
+	size: 0,
+	name: "",
+	file: null,
+};
+
+let changedFilesList = [];
+
+// Page steps
+function nextPageStep() {
+	currentPageStep++;
+	showPageStep(currentPageStep);
+}
+
+function resetPageStep() {
+	currentPageStep = 0;
+	showPageStep(currentPageStep);
+}
+
+function showPageStep(index) {
+	const allPages = document.querySelectorAll(".left-step");
+
+	allPages.forEach((page) => {
+		page.classList.add("hidden");
+	});
+
+	allPages[index].classList.remove("hidden");
+}
+
+// Page controller
+document.querySelector("#resonite-package-file-input").addEventListener("change", async (e) => {
 	const file = e.target.files[0];
 	if (!file) return;
-	zipData = await JSZip.loadAsync(file);
-	zipOriginalSize = file.size;
-	document.querySelector(`#original-size-value`).innerText = toMebibyte(file.size, true);
-	packageName = file.name;
-	document.getElementById("goBtn").disabled = false;
+
+	inputFile.size = file.size;
+	inputFile.name = file.name;
+	inputFile.file = await JSZip.loadAsync(file);
+	nextPageStep();
 });
 
-document.getElementById("goBtn").addEventListener("click", async () => {
-	if (!zipData) return;
-	const newZip = new JSZip();
+document.querySelector("#start-compression").addEventListener("click", async () => {
+	startCompression();
+});
 
-	for (const objectEntry of Object.keys(zipData.files)) {
-		const name = zipData.files[objectEntry].name;
-		const entry = zipData.files[objectEntry];
+const webpQualitySlider = document.querySelector("#webp-quality-range");
+const webpQualitySliderValue = document.querySelector("#webp-quality-display");
+webpQualitySliderValue.textContent = webpQualitySlider.value;
+webpQualitySlider.addEventListener("input", () => (webpQualitySliderValue.textContent = parseFloat(webpQualitySlider.value).toFixed(2)));
+
+async function startCompression() {
+	if (!inputFile.file) return;
+	document.querySelector("#start-compression").disabled = true;
+
+	const isWebPConversionEnabled = document.querySelector("#webp-compression-enabled").checked;
+	const webpQuality = document.querySelector("#webp-quality-range").value;
+
+	const compressedZip = new JSZip();
+
+	for (const assetEntry of Object.keys(inputFile.file.files)) {
+		const entry = inputFile.file.files[assetEntry];
 
 		if (entry.dir) {
-			newZip.folder(name);
+			compressedZip.folder(entry.name);
+			console.log(`Created new folder: '${entry.name}'`);
 			continue;
 		}
 
 		const blob = await entry.async("blob");
-		const head = new Uint8Array(await blob.slice(0, 512).arrayBuffer());
-		const mime = detectMime(head);
 
-		if (mime && mime.startsWith("image/") && mime !== "image/webp" && document.querySelector("#webp-convert-value").checked) {
-			const webp = await toWebP(blob);
-			newZip.file(name, webp);
-			let changedFile = { name, originalSize: entry._data.uncompressedSize, newSize: webp.size };
-			if (changedFile.originalSize < changedFile.newSize) {
-				addChangedFile(changedFile, false);
+		if (isWebPConversionEnabled) {
+			const head = new Uint8Array(await blob.slice(0, 512).arrayBuffer());
+			const mime = detectMime(head);
+
+			const isMimeImageAndNotWebp = mime && mime.startsWith("image/") && mime !== "image/webp";
+
+			if (isMimeImageAndNotWebp) {
+				const webp = await toWebP(blob, webpQuality);
+
+				let changedFile = { name: entry.name, originalSize: entry._data.uncompressedSize, newSize: webp.size };
+
+				if (changedFile.originalSize > changedFile.newSize) {
+					console.log(`${changedFile.name} compressed successfully, writing.`);
+					compressedZip.file(entry.name, webp);
+					changedFilesList.push(changedFile);
+					addLog("webpConversion", changedFile);
+				} else {
+					console.log(`${changedFile.name} did not compress well, using original file.`);
+					compressedZip.file(entry.name, blob);
+				}
 				continue;
 			}
-			addChangedFile(changedFile, true);
-			continue;
 		}
 
-		newZip.file(name, blob);
+		compressedZip.file(entry.name, blob);
 	}
 
-	const content = await newZip.generateAsync({ type: "blob", compression: "DEFLATE", compressionOptions: { level: 9 } });
-	const url = URL.createObjectURL(content);
-	const a = document.getElementById("downLink");
-	a.href = url;
-	a.download = packageName.replace(".resonitepackage", "_compressed.resonitepackage");
-	a.classList.remove("hidden");
-	zipNewSize = content.size;
+	const compressedZipContent = await compressedZip.generateAsync({ type: "blob", compression: "DEFLATE", compressionOptions: { level: 9 } });
+	const compressedZipUrl = URL.createObjectURL(compressedZipContent);
 
-	document.querySelector(`#optimized-size-value`).innerText = toMebibyte(zipNewSize, true);
-});
+	const downloadButton = document.querySelector("#download-compressed-zip");
+	downloadButton.href = compressedZipUrl;
+	downloadButton.download = inputFile.name.replace(".resonitepackage", "_compressed.resonitepackage");
+
+	document.querySelector("#file-stat-original-size").innerText = sizeToMebibyte(inputFile.size);
+	document.querySelector("#file-stat-compressed-size").innerText = sizeToMebibyte(compressedZipContent.size);
+	document.querySelector("#file-stat-space-saved").innerText = sizeToMebibyte(inputFile.size - compressedZipContent.size);
+	document.querySelector("#file-stat-files-changed").innerText = changedFilesList.length;
+
+	alert("Finished!");
+
+	nextPageStep();
+}
 
 function detectMime(buf) {
 	const b = buf;
@@ -67,41 +123,31 @@ function detectMime(buf) {
 	return null;
 }
 
-function toWebP(blob) {
+function toWebP(blob, quality = 0.85) {
 	return new Promise((res) => {
 		const img = new Image();
+
 		img.src = URL.createObjectURL(blob);
+
 		img.onload = () => {
 			const c = document.createElement("canvas");
 			c.width = img.naturalWidth;
 			c.height = img.naturalHeight;
 			c.getContext("2d").drawImage(img, 0, 0);
-			c.toBlob((b) => res(b), "image/webp", document.querySelector("#webp-quality").value);
+			c.toBlob((b) => res(b), "image/webp", quality);
 		};
 	});
 }
 
-function addChangedFile(changedFileObject, replaced) {
-	if (!replaced) return;
-	changedFiles.push(changedFileObject);
-	const htmlToAppend = `<div class="entry">
-		<div class="entry-title">${changedFileObject.name}</div>
-		<div class="entry-metadata">
-			<span class="entry-size">Original Size: <span class="entry-size-value">${toMebibyte(changedFileObject.originalSize, true)}</span></span>
-			<span class="entry-size">New Size: <span class="entry-size-value">${toMebibyte(changedFileObject.newSize, true)}</span></span>
-			<span class="entry-size entry-size-difference">Difference: <span class="entry-size-value">${toMebibyte(changedFileObject.originalSize - changedFileObject.newSize, true)}</span></span>
-		</div>
-	</div>`;
-
-	document.querySelector("#fileList").insertAdjacentHTML("beforeend", htmlToAppend);
+function addLog(type, entryData) {
+	if (type === "webpConversion") {
+		const templateElement = document.querySelector("#log-entry-webp");
+		let logEntry = templateElement.content.cloneNode(true);
+		logEntry.querySelector(".title").innerText = entryData.name;
+		logEntry.querySelector("[data-type=original-size]").innerText = "Original: " + sizeToMebibyte(entryData.originalSize);
+		logEntry.querySelector("[data-type=new-size]").innerText = "New: " + sizeToMebibyte(entryData.newSize);
+		logEntry.querySelector("[data-type=savings]").innerText = "Saved: " + sizeToMebibyte(entryData.originalSize - entryData.newSize);
+		document.querySelector(".log").appendChild(logEntry);
+		return;
+	}
 }
-
-function toMebibyte(value, includeLabel) {
-	const MEBIBYTE_SIZE = 1024 ^ 2;
-	return String((value / (MEBIBYTE_SIZE * 1000)).toFixed(2)) + (includeLabel ? " MiB" : "");
-}
-
-const webpQualitySlider = document.querySelector("#webp-quality");
-const webpQualitySliderValue = document.querySelector("#webp-quality-value");
-webpQualitySliderValue.textContent = webpQualitySlider.value;
-webpQualitySlider.addEventListener("input", () => (webpQualitySliderValue.textContent = webpQualitySlider.value));

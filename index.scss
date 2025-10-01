@@ -1,118 +1,143 @@
+$background-1: lightgray;
+
 body {
+	margin: 0;
 	display: flex;
 	height: 100vh;
-	padding: 1rem;
 	box-sizing: border-box;
-	overflow: hidden;
-	margin: 0;
+	overflow-y: hidden;
+	padding: 1rem;
+}
 
+.left-container {
+	background-color: $background-1;
+	height: 100%;
+	width: 20%;
+	margin-right: 1rem;
+	display: flex;
 
-	.file-container,
-	.asset-container {
+	.left-step {
 		display: flex;
 		flex-direction: column;
-		background-color: lightgray;
-		padding: 1rem;
-		box-sizing: border-box;
-		margin: auto 0;
-	}
-
-	.file-container {
+		margin: auto;
+		width: 100%;
 		height: 100%;
-		margin-right: 1rem;
-		width: 500px;
 
-		.options {
-			display: flex;
-			flex-direction: column;
-
-			.option-entry {
-				display: flex;
-				flex-direction: column;
-
-				.option-title {
-					flex-grow: 1;
-					display: flex;
-
-					span {
-						margin: auto auto auto 0;
-					}
-
-					input[type=checkbox] {
-						height: 24px;
-						width: 24px;
-					}
-				}
-
-			}
-		}
-
-		.file-stats {
-			margin: auto 0 0 0;
-
-			.file-stats-entry {
-				span {
-					display: flex;
-
-					span {
-						margin: 0 0 0 auto;
-					}
-				}
-			}
-		}
-
-		.action-button {
-			margin-bottom: 1rem;
-		}
-
-		a {
+		h1 {
 			text-align: center;
 		}
 
-		.action-button:last-of-type {
-			margin-bottom: 0;
+		input[type=file] {
+			margin: auto;
 		}
-	}
 
-	.asset-container {
-		width: 100%;
-		height: 100%;
-		overflow-y: auto;
-
-		.entry {
+		.option {
 			display: flex;
 			flex-direction: column;
-			border-radius: 5px;
-			border: 1px solid gray;
-			background-color: #0000001c;
 			padding: 1rem;
 			box-sizing: border-box;
-			margin-bottom: 1rem;
 
-			.entry-title {
-				font-size: 1.1rem;
-			}
-
-			.entry-metadata {
+			.option-primary {
 				display: flex;
-				flex-direction: column;
+				width: 100%;
 
-				.entry-size {
-					font-size: 0.9rem;
-					color: rgb(80, 80, 80);
-
-					.entry-size-value {
-						font-size: 1rem;
-						color: "#111";
-					}
-
+				span {
+					margin: auto auto auto 0;
 				}
 
-				.entry-size-difference {
-					color: green;
+				input[type=checkbox] {
+					width: 24px;
+					height: 24px;
+					margin: auto 0 auto auto;
+				}
+			}
+
+			.option-secondary {
+				display: flex;
+				margin-top: 1rem;
+
+				span {
+					margin: auto 0;
+				}
+
+				input {
+					flex-grow: 1;
+					margin: 0 1rem;
+				}
+			}
+
+		}
+
+		.action-button-container {
+			margin: auto auto 0 auto;
+			width: 100%;
+			padding: 1rem;
+			box-sizing: border-box;
+
+			button {
+				width: 100%;
+			}
+		}
+
+		.file-stat {
+			padding: 0.5rem;
+			box-sizing: border-box;
+			display: flex;
+
+			.value {
+				margin: auto 0 auto auto;
+			}
+		}
+
+		.download {
+			margin: 0 auto;
+		}
+	}
+}
+
+.right-container {
+	height: 100%;
+	width: 80%;
+	background-color: $background-1;
+
+	.log {
+		display: flex;
+		flex-direction: column;
+		padding: 0.25rem;
+		box-sizing: border-box;
+		overflow-y: auto;
+		height: 100%;
+
+		.log-entry {
+			width: 100%;
+			border-radius: 5px;
+			border: 1px solid gray;
+			background-color: darkgray;
+			padding: 1rem;
+			margin-bottom: 0.5rem;
+			box-sizing: border-box;
+
+			.title {
+				display: flex;
+			}
+
+			.details {
+				display: flex;
+				flex-direction: row;
+				margin: auto 0 auto auto;
+				width: fit-content;
+
+				span {
+					margin-left: 1rem;
 				}
 			}
 		}
+
+		.log-entry:last-of-type {
+			margin-bottom: 0;
+		}
+
+		.log-webp-conversion {}
 	}
 }
 

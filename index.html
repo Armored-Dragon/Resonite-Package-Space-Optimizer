@@ -1,42 +1,83 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Resonite Package Space Optimizer</title>
+		<link rel="icon" type="image/svg+xml" href="/Resonite-Package-Space-Optimizer/favicon.ico" />
 		<script async src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+		<script async src="/conversions.js"></script>
 		<script async src="/index.js"></script>
 		<link rel="stylesheet" href="index.css" />
 	</head>
+
 	<body>
-		<div class="file-container">
-			<input type="file" id="zipFile" accept=".resonitepackage" />
-			<div class="options">
-				<div class="option-entry">
-					<div class="option-title">
+		<div class="left-container">
+			<!-- Upload file -->
+			<div class="left-step">
+				<h1>Select your file</h1>
+				<input type="file" id="resonite-package-file-input" accept=".resonitepackage" />
+			</div>
+
+			<!-- Chose options -->
+			<div class="left-step hidden">
+				<div class="option">
+					<div class="option-primary">
 						<span>Convert images to WebP</span>
-						<input id="webp-convert-value" type="checkbox" />
+						<input id="webp-compression-enabled" type="checkbox" checked />
 					</div>
+					<div class="option-secondary">
+						<span>WebP Quality</span>
+						<input id="webp-quality-range" type="range" value="0.85" max="1" min="0.1" step="0.01" />
+						<span id="webp-quality-display">0.5</span>
+					</div>
+				</div>
 
-					<div class="slider">
-						<span>Quality</span>
-						<input id="webp-quality" type="range" value="0.85" max="1" min="0.01" step="0.01" />
-						<span id="webp-quality-value"></span>
-					</div>
+				<div class="action-button-container">
+					<button id="start-compression">Compress</button>
 				</div>
 			</div>
-			<div class="file-stats">
-				<div class="file-stats-entry">
-					<span>Original Size: <span id="original-size-value">-</span></span>
+
+			<!-- Stats and Download -->
+			<div class="left-step hidden">
+				<div class="file-stat">
+					<span>Original size:</span>
+					<span id="file-stat-original-size" class="value">5 MiB</span>
 				</div>
-				<div class="file-stats-entry">
-					<span>Optimized Size: <span id="optimized-size-value">-</span></span>
+				<div class="file-stat">
+					<span>New size:</span>
+					<span id="file-stat-compressed-size" class="value">5 MiB</span>
 				</div>
+
+				<div class="file-stat">
+					<span>Space saved:</span>
+					<span id="file-stat-space-saved" class="value">25 MiB</span>
+				</div>
+
+				<div class="file-stat">
+					<span>Files changed:</span>
+					<span id="file-stat-files-changed" class="value">250</span>
+				</div>
+
+				<a id="download-compressed-zip" class="download" href="#">Download File</a>
 			</div>
-			<button class="action-button" id="goBtn" disabled>Compress Package</button>
-			<a id="downLink" class="hidden">Download Compressed Package</a>
 		</div>
-
-		<div class="asset-container">
-			<div id="fileList"></div>
+		<div class="right-container">
+			<div class="log"></div>
 		</div>
 	</body>
+
+	<template id="log-entry-webp">
+		<div class="log-entry log-webp-conversion">
+			<div class="title">Asset Name</div>
+			<div class="details">
+				<span>WebP Conversion</span>
+				<span data-type="original-size">Original Size</span>
+				&nbsp;-
+				<span data-type="new-size">New Size</span>
+				&nbsp;-
+				<span data-type="savings">Savings / Savings%</span>
+			</div>
+		</div>
+	</template>
 </html>
