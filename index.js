@@ -78,6 +78,12 @@ async function startCompression() {
 			if (isMimeImageAndNotWebp) {
 				const webp = await toWebP(blob, webpQuality);
 
+				if (!webp) {
+					console.error(`${entry.name} had an error compressing. Using original file.`);
+					compressedZip.file(entry.name, blob);
+					continue;
+				}
+
 				let changedFile = { name: entry.name, originalSize: entry._data.uncompressedSize, newSize: webp.size };
 
 				if (changedFile.originalSize > changedFile.newSize) {
