@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resonite Package Space Optimizer</title>
+    <link rel="icon" type="image/svg+xml" href="/Resonite-Package-Space-Optimizer/src/img/favicon.ico" />
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <link rel="stylesheet" href="index.css" />
+</head>
+
+<body>
+    <div class="content">
+        <nav>
+            <div class="logo">
+                <img src="/src/img/armoreddragon.webp">
+                <span class="service-name">Resonite Package Space Optimizer</span>
+            </div>
+            <div class="right">
+                <span>Made by <a target="_blank" href="https://adragon.dev">someone who cares</a> <span style="color:#ff4c99;"><3</span></span>
+            </div>
+        </nav>
+
+        <div id="upload-area" class="user-interaction-container upload-area">
+            <div class="img-container">
+                <img src="/src/img/drop_area.svg">
+            </div>
+            <div class="text">Add your .ResonitePackage</div>
+        </div>
+
+        <div id="processing-floor" class="user-interaction-container processing-floor hidden"> </div>
+
+        <div class="info-area">
+            <h1>Resonite Package Space Optimizer</h1>
+            <p>This tool is used to compress the assets inside of a <mark>.ResonitePackage</mark> file. Currently the
+                tool can only convert image assets into a more space efficient format, WebP.<br> All optimizations are done in the browser, so nothing is uploaded to any server.
+            </p>
+
+            <h1>Instructions</h1>
+            <p>
+            <ol>
+                <li>Obtain a <mark>.ResonitePackage</mark> file from Resonite.
+                    <a target="_blank" href="https://wiki.resonite.com/ResonitePackage#How_to_export">Here's how!</a>
+                </li>
+                <li>Keep this obtained file safe! You will be deleting your copy/copies on Resonite in a future step.
+                </li>
+                <li>Add your <mark>.ResonitePackage</mark> to the website. Don't worry, nothing leaves your device.
+                </li>
+                <li>Select which operations you want to preform on the asset in the newly added entry.
+                </li>
+                <li>Click "Start" on your entry.
+                </li>
+                <li>Once complete, click the "Download" button to obtain the optimized package.
+                </li>
+                <li>Load the downloaded optimized package into Resonite.
+                </li>
+                <li>Validate that there are no issues with your optimized asset.
+                </li>
+                <li>Delete any copies of that item in your Resonite inventory. Remember to keep your original
+                    <mark>.ResonitePackage</mark> handy, at least
+                    for a short time just in case something becomes a problem.
+                </li>
+                <li>Save your newly imported optimized item.
+                </li>
+            </ol>
+            </p>
+            <h1>Troubleshooting</h1>
+            <h2>All assets have rainbow textures.</h2>
+            <p>This is likely due to your web browser blocking the use of the Canvas API. Several security focused web
+                browsers will automatically block or obfuscate data from the Canvas API. The simple fix would be to
+                unblock the website so that it can use the Canvas API. Otherwise, try using a different browser.</p>
+        </div>
+    </div>
+</body>
+<template id="template-asset-listing">
+    <div class="asset-listing">
+        <div class="asset-listing-content">
+            <div class="asset-title">NAME</div>
+            <div class="asset-options">
+                <input id="asset-1" data-setting="webp" type="checkbox" checked>
+                <label for="asset-1" class="toggle-button"><img src="/src/img/swap.svg"><span>WebP</span></label>
+                <a class="start" href="#">
+                    <img src="/src/img/go.svg"><span>Start</span>
+                </a>
+                <a class="processing hidden" disabled href="#">
+                    <img src="/src/img/throbber.svg"><span>Processing</span>
+                </a>
+                <a class="download hidden" href="#">
+                    <img src="/src/img/download.svg"><span>Download</span>
+                </a>
+            </div>
+            <div class="asset-download"></div>
+        </div>
+        <div class="progress-bar" style="width:0%"></div>
+    </div>
+</template>
+<script src="./index.js"></script>
+
+</html>
