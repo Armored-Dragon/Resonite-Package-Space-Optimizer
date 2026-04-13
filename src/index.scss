@@ -93,6 +93,12 @@ nav {
     }
 }
 
+#upload-area-noscript {
+	div {
+		text-align: center;
+	}
+}
+
 .upload-area.drag-active {
     background-color: darken(#5a5a5a, 10%) !important;
 }

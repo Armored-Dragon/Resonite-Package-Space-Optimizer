@@ -83,6 +83,10 @@ nav .right a:hover {
   margin: auto;
 }
 
+#upload-area-noscript div {
+  text-align: center;
+}
+
 .upload-area.drag-active {
   background-color: rgb(64.5, 64.5, 64.5) !important;
 }

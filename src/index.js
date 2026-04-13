@@ -175,3 +175,5 @@ const ui = {
 	}
 }
 
+document.querySelector("#upload-area").classList.remove("hidden");
+document.querySelector("#upload-area-noscript").classList.add("hidden");
