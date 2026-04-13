@@ -1,14 +1,15 @@
+/* global JSZip */
+
 const dropZone = document.querySelector('#upload-area');
 const templateEntry = document.querySelector("#template-asset-listing")
 const dropEventsArr = ["dragenter", "dragover"]
-const validOptimizationSettings = ["webp"]
 const WEBP_QUALITY = 0.85
 
 dropEventsArr.forEach(evt => {
 	dropZone.addEventListener(evt, e => e.preventDefault());
 });
 
-dropZone.addEventListener("dragenter", (e) => {
+dropZone.addEventListener("dragenter", () => {
 	dropZone.classList.add('drag-active');
 })
 
@@ -144,18 +145,18 @@ const ui = {
 		const loadingIndicator = clone.querySelector(".processing");
 
 		startBtn.addEventListener('click', async () => {
-			let settings = []
+			let settings = [];
 
 			if (webpCheckbox.checked) {
 				settings.push("webp");
 			}
 
 			allOptionsElements.forEach((elem) => {
-				elem.classList.add("hidden")
+				elem.classList.add("hidden");
 			})
 
-			startBtn.classList.add("hidden")
-			loadingIndicator.classList.remove("hidden")
+			startBtn.classList.add("hidden");
+			loadingIndicator.classList.remove("hidden");
 
 			await optimizeAsset(file, settings, document.querySelector(`#${file.id}`));
 		});
