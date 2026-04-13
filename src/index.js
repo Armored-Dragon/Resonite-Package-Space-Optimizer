@@ -126,8 +126,8 @@ function compressAsWebP(blob, quality = 0.9) {
 }
 
 function sizeToMebibyte(value, includeLabel = true) {
-	const MEBIBYTE_SIZE = 1024 ^ 2;
-	return String((value / (MEBIBYTE_SIZE * 1000)).toFixed(2)) + (includeLabel ? " MiB" : "");
+	const MEBIBYTE_SIZE = 1024 * 1024;
+	return String((value / MEBIBYTE_SIZE).toFixed(2)) + (includeLabel ? " MiB" : "");
 }
 
 const ui = {
