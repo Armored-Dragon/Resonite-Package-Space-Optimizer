@@ -93,6 +93,10 @@ nav {
     }
 }
 
+.upload-area.drag-active {
+    background-color: darken(#5a5a5a, 10%) !important;
+}
+
 .processing-floor {
     gap: 0.25rem;
 

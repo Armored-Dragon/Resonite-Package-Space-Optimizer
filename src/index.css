@@ -83,6 +83,10 @@ nav .right a:hover {
   margin: auto;
 }
 
+.upload-area.drag-active {
+  background-color: rgb(64.5, 64.5, 64.5) !important;
+}
+
 .processing-floor {
   gap: 0.25rem;
 }
