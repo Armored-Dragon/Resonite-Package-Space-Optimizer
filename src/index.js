@@ -27,16 +27,22 @@ dropZone.addEventListener('dragleave', e => {
 });
 
 function handleFiles(files) {
-	document.querySelector("#processing-floor").classList.remove("hidden");
+	let includesValidFile = false
+
 	files.forEach((file) => {
 		if (file.name.toLowerCase().endsWith('.resonitepackage')) {
 			file.id = `r${crypto.getRandomValues(new Uint32Array(1))}`;
 			ui.addListing(file);
+			includesValidFile = true
 		} else {
 			// TODO: Better error?
 			alert(`Invalid file type: ${file.name}. Expected .ResonitePackage`);
 		}
 	})
+
+	if (includesValidFile == false) return;
+
+	document.querySelector("#processing-floor").classList.remove("hidden");
 }
 
 function detectMime(buf) {
